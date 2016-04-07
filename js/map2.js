@@ -12,6 +12,7 @@ map2.enableScrollWheelZoom(true);
 map2.enablePinchToZoom(true);
 $.getJSON("js/park_hospital.json",function(data){
   var points=data.points;
+  console.log(points);
   if(!isSupportCanvas()){
     	alert('热力图目前只支持有canvas支持的浏览器,您所使用的浏览器不能使用热力图功能~')
     }
