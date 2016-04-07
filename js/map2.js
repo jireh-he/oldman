@@ -5,21 +5,21 @@
  * Created by admin on 2016-3-29.
  */
 
-var map=new BMap.Map("map2");
+var map2=new BMap.Map("map2");
 $("#map2").width(width*0.8).height(height *0.9);
-map.centerAndZoom("厦门",12);
-map.enableScrollWheelZoom(true);
-map.enablePinchToZoom(true);
+map2.centerAndZoom("厦门",12);
+map2.enableScrollWheelZoom(true);
+map2.enablePinchToZoom(true);
 $.getJSON("js/park_hospital.json",function(data){
   var points=data.points;
   if(!isSupportCanvas()){
     	alert('热力图目前只支持有canvas支持的浏览器,您所使用的浏览器不能使用热力图功能~')
     }
-	var mapv=new Mapv({drawTypeControl: true,map:map});
+	var mapv2=new Mapv({drawTypeControl: true,map:map2});
     // 创建一个图层
 var layer = new Mapv.Layer({
     zIndex: 3, // 图层的层级
-    mapv: mapv, // 对应的mapv
+    mapv: mapv2, // 对应的mapv
     dataType: 'point', // 数据类型，point:点数据类型,polyline:线数据类型,polygon:面数据类型
     //数据，格式如下
     data: points,
