@@ -28,7 +28,7 @@ var showHoney=function(map,points){
 	var layer = new Mapv.Layer({
     zIndex: 3, // 图层的层级
     mapv: mapv, // 对应的mapv
-    dataType: 'point', // 数据类型，point:点数据类型,polyline:线数据类型,polygon:面数据类型
+    dataType: 'polygon', // 数据类型，point:点数据类型,polyline:线数据类型,polygon:面数据类型
     //数据，格式如下
     data: points,
     drawType: 'density', // 展示形式
@@ -50,11 +50,9 @@ var showHoney=function(map,points){
         },
         events: {
             click: function(e, data) {
-                //console.log('click', e.point, data);
-            	console.log(data.zdm);
+
                 var geoc = new BMap.Geocoder();
                 geoc.getLocation(e.point, function (rs) {
-                    console.log(rs);
                     var addComp = rs.addressComponents;
                     alert(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street
                     +"，老人出行人次:"+data);
