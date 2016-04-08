@@ -12,9 +12,20 @@ $.getJSON("js/heat.json",function(data){
   if(!isSupportCanvas()){
     	alert('热力图目前只支持有canvas支持的浏览器,您所使用的浏览器不能使用热力图功能~')
     }
+  
+  	showHoney(map,points);
+	//判断浏览区是否支持canvas
+    function isSupportCanvas() {
+     var elem = document.createElement('canvas');
+     return !!(elem.getContext && elem.getContext('2d'));
+    }
+
+});
+
+var showHoney=Function(map,points){
 	var mapv=new Mapv({drawTypeControl: true,map:map});
     // 创建一个图层
-var layer = new Mapv.Layer({
+	var layer = new Mapv.Layer({
     zIndex: 3, // 图层的层级
     mapv: mapv, // 对应的mapv
     dataType: 'point', // 数据类型，point:点数据类型,polyline:线数据类型,polygon:面数据类型
@@ -50,12 +61,6 @@ var layer = new Mapv.Layer({
             },
         }
     }
-});
-	//判断浏览区是否支持canvas
-    function isSupportCanvas() {
-     var elem = document.createElement('canvas');
-     return !!(elem.getContext && elem.getContext('2d'));
-    }
-
-});
+	});
+}
 
