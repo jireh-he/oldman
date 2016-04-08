@@ -16,8 +16,8 @@ var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+    .attr("width", width-margin.left - margin.right)
+    .attr("height", height -margin.top - margin.bottom);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
@@ -25,7 +25,7 @@ var rankList=function(data){
 	
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
-	}).keys()).rangeRoundBands([0,yRangeHeight],0.1);
+	}).keys()).rangeRoundBands([0,yRangeHeight],0.2);
 
 	var rectheight=parseInt(yRangeHeight/data.length);
 	var rect=svg.selectAll("rect")
