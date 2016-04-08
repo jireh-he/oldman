@@ -4,8 +4,7 @@
 
 d3.json("js/park_hospital.json",function(error,data){
 	if (error) return console.warn(error);
-	console.log(data);
-	rankList(data);
+	rankList(data.points);
 });
 
 var rankList=function(data){
@@ -17,7 +16,7 @@ var rankList=function(data){
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}));
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
-	var xScale=d3.scale.linear().domain([0,maxcnt]).range([xRangeWidth,0]);
+	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
 	})).rangeRoundBands([0,yRangeHeight],0.1);
@@ -43,7 +42,6 @@ var rankList=function(data){
 			.attr("transform","translate(" + margin.left + "," + (height-margin.bottom) +  ")")
 			.call(xAxis)
 			.append("text")
-            .style("text-anchor", "end")
             .text("人次或人数");
 
 	svg.append("g")
