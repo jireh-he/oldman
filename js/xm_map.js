@@ -51,6 +51,7 @@ var showHoney=function(map,points){
         events: {
             click: function(e, data) {
                 //console.log('click', e.point, data);
+            	console.log(data.zdm);
                 var geoc = new BMap.Geocoder();
                 geoc.getLocation(e.point, function (rs) {
                     console.log(rs);
