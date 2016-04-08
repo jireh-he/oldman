@@ -5,8 +5,8 @@
 d3.json("js/park_hospital.json",function(error,data){
 	if (error) return console.warn(error);
 	points=data.points.filter(function(p){
-		return p.zdm.indexOf("医院");
-	}).sort(function(a,b){return b.count-a.count}).slice(0,9);
+		return p.zdm.indexOf("医院")>0;
+	}).sort(function(a,b){return b.count>a.count}).slice(0,9);
 	margin.left=120;
 	rankList(data.points);
 });
