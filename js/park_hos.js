@@ -33,7 +33,7 @@ var rankList=function(data){
 				.enter()
 				.append("rect")
 				.attr("width",function(d){return xScale(d.count)-xScale(0)})
-				.attr("height",rectheight)
+				.attr("height",yScale.rangeBand())
 				.attr("x",margin.left)
 				.attr("y",function(d){return margin.top+yScale(d.zdm);})
 				.style("fill","steelblue");
