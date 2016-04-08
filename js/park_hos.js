@@ -19,7 +19,7 @@ var rankList=function(data){
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
-	})).rangeRoundBands([0,xRangeHeight],0.1);
+	})).rangeRoundBands([0,yRangeHeight],0.1);
 	var rect=svg.selectAll("rect")
 				.data(data)
 				.enter()
