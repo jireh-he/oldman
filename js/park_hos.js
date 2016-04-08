@@ -16,8 +16,8 @@ var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height +margin.top + margin.bottom);
+    .attr("width", width)
+    .attr("height", height);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
