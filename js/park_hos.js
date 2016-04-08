@@ -8,6 +8,7 @@ d3.json("js/park_hospital.json",function(error,data){
 });
 
 var rankList=function(data){
+	console.log(data);
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
