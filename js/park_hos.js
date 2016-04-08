@@ -17,8 +17,10 @@ var rankList=function(data){
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
+	console.log(d3.map(data,function(d) {
+		return d.zdm;		
+	}));
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
-		console.log(d);
 		return d.zdm;		
 	})).rangeRoundBands([0,yRangeHeight],0.1);
 	
