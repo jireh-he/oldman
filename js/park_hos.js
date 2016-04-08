@@ -15,7 +15,7 @@ var rankList=function(data){
     .attr("height", height + margin.top + margin.bottom);
 	tt=d3.map(data,function(d){return d.count});
 	console.log(tt);
-	var maxcnt=d3.max(d3.map(data,function(d){return d.count}));
+	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
