@@ -36,7 +36,10 @@ var rankList=function(data){
 				.attr("height",yScale.rangeBand())
 				.attr("x",margin.left)
 				.attr("y",function(d){return margin.top+yScale(d.zdm);})
-				.style("fill","steelblue");
+				.style("fill","steelblue")
+				.text(function(d) {
+					return "刷卡人次:"+d.count
+				});
 	   //添加坐标轴
     var xAxis=d3.svg.axis()
         .scale(xScale).orient("bottom");
