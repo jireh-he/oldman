@@ -21,7 +21,7 @@ var rankList=function(data){
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width*0.9-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
-	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
+	var xScale=d3.scale.linear().domain([0,maxcnt]).range([margin.left,xRangeWidth]);
 	
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
