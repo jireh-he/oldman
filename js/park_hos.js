@@ -6,15 +6,16 @@ d3.json("js/park_hospital.json",function(error,data){
 	if (error) return console.warn(error);
 	rankList(data.points);
 });
-
+var tt;
 var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
+	tt=d3.map(data,function(d){return d.count});
+	console.log(tt);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}));
-	console.log(maxcnt);
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
