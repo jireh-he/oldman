@@ -21,14 +21,15 @@ var rankList=function(data){
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
 	})).rangeRoundBands([0,yRangeHeight],0.1);
+	var rectheight=parseInt(yRangeHeight/data.length);
 	var rect=svg.selectAll("rect")
 				.data(data)
 				.enter()
 				.append("rect")
-				.attr("width",function(d){return xScale(d.count)-xScale(0)})
-				.attr("height",yScale.rangeBand())
-				.attr("x",function(d){return xScale(d.count)})
-				.attr("y",function(d){return yScale(d.zdm)})
+				.attr("width",function(d){console.log(d);return xScale(d.count)-xScale(0)})
+				.attr("height",rectheight)
+				.attr("x",margin.left)
+				.attr("y",function(d,i){return i*rectheight})
 				.style("fill","steelblue")
 				.attr("transform","translate(" + margin.left + "," + margin.top +  ")");
 	   //添加坐标轴
