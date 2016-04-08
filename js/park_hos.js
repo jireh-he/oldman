@@ -18,9 +18,9 @@ var rankList=function(data){
 	var yRangeHeight=height-margin.top-margin.bottom;
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
+		console.log(d);
 		return d.zdm;		
 	})).rangeRoundBands([0,yRangeHeight],0.1);
-	console.log(xScale(0));
 	
 	var rectheight=parseInt(yRangeHeight/data.length);
 	var rect=svg.selectAll("rect")
