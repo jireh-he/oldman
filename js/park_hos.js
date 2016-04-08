@@ -46,14 +46,14 @@ var rankList=function(data){
 
     svg.append("g")
 			.attr("class","x axis")
-			.attr("transform","translate(0," + (height-margin.bottom) +  ")")
+			.attr("transform","translate("+xScale(0)+"," + (height-margin.bottom) +  ")")
 			.call(xAxis)
 			.append("text")
             .text("人次或人数");
 
 	svg.append("g")
 			.attr("class","y axis")
-			.attr("transform","translate(" + margin.left + "," + (height - margin.bottom - yRangeHeight) +  ")")
+			.attr("transform","translate(" + xScale(0) + "," + (height - margin.bottom - yRangeHeight) +  ")")
 			.call(yAxis);
 	
 }
