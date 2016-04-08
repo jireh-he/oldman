@@ -28,8 +28,8 @@ var rankList=function(data){
 				.attr("height",yScale.rangeBand())
 				.attr("x",function(d){return xScale(d.count)})
 				.attr("y",function(d){return yScale(d.zdm)})
-				.style("fill","steelblue");
-	.attr("transform","translate(" + margin.left + "," + margin.top +  ")");
+				.style("fill","steelblue")
+				.attr("transform","translate(" + margin.left + "," + margin.top +  ")");
 	   //添加坐标轴
     var xAxis=d3.svg.axis()
         .scale(xScale).orient("bottom");
