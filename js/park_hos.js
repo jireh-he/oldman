@@ -6,7 +6,7 @@ d3.json("js/park_hospital.json",function(error,data){
 	if (error) return console.warn(error);
 	rankList(data.points);
 });
-var tt;
+
 var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
@@ -31,8 +31,7 @@ var rankList=function(data){
 				.attr("height",rectheight)
 				.attr("x",xScale(0))
 				.attr("y",function(d){return yScale(d.zdm);})
-				.style("fill","steelblue")
-				.attr("transform","translate("+x+"," + margin.top +y+  ")");
+				.style("fill","steelblue");
 	   //添加坐标轴
     var xAxis=d3.svg.axis()
         .scale(xScale).orient("bottom");
