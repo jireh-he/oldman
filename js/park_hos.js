@@ -13,11 +13,11 @@ var rankList=function(data){
 	.append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
-	var maxcnt=d3.max(data.map(function(d){d.count}));
+	var maxcnt=d3.max(d3.map(data,function(d){return d.count}));
 	var xRangeWidth=width-margin.left-margin.right;
 	var xRangeHeight=height-margin.top-margin.bottom;
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
-	var yScale=d3.scale.ordinal().domain(data.map(function(d) {
+	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
 	})).rangeRoundBands([0,xRangeHeight],0.1);
 	var rect=svg.selectAll("rect")
