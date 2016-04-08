@@ -16,12 +16,12 @@ var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
-    .attr("width", width)
+    .attr("width", width*0.9)
     .attr("height", height);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
-	var xRangeWidth=width-margin.left-margin.right;
+	var xRangeWidth=width*0.9-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
-	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
+	var xScale=d3.scale.linear().domain([0,maxcnt]).range([margin.left,xRangeWidth]);
 	
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
@@ -46,7 +46,7 @@ var rankList=function(data){
 
     svg.append("g")
 			.attr("class","x axis")
-			.attr("transform","translate(" + margin.right + "," + (height-margin.bottom+10) +  ")")
+			.attr("transform","translate(" + margin.left + "," + (height-margin.bottom) +  ")")
 			.call(xAxis)
 			.append("text")
             .text("人次或人数");
