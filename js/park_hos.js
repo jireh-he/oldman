@@ -25,7 +25,7 @@ var rankList=function(data){
 	
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
-	}).keys()).rangeRoundBands([0,yRangeHeight],0.2);
+	}).keys()).rangeRoundBands([0,yRangeHeight],0.1);
 
 	var rectheight=parseInt(yRangeHeight/data.length);
 	var rect=svg.selectAll("rect")
@@ -46,7 +46,7 @@ var rankList=function(data){
 
     svg.append("g")
 			.attr("class","x axis")
-			.attr("transform","translate(" + margin.left + "," + (height-margin.bottom) +  ")")
+			.attr("transform","translate(" + xScale(0) + "," + (height-margin.bottom) +  ")")
 			.call(xAxis)
 			.append("text")
             .text("人次或人数");
