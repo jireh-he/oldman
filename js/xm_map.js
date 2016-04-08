@@ -50,7 +50,6 @@ var showHoney=function(map,points){
         },
         events: {
             click: function(e, data) {
-
                 var geoc = new BMap.Geocoder();
                 geoc.getLocation(e.point, function (rs) {
                     var addComp = rs.addressComponents;
