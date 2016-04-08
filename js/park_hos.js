@@ -21,6 +21,7 @@ var rankList=function(data){
 		return d.zdm;		
 	})).rangeRoundBands([0,yRangeHeight],0.1);
 	console.log(xScale(0));
+	
 	var rectheight=parseInt(yRangeHeight/data.length);
 	var rect=svg.selectAll("rect")
 				.data(data)
