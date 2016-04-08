@@ -46,7 +46,7 @@ var rankList=function(data){
 
     svg.append("g")
 			.attr("class","x axis")
-			.attr("transform","translate(" + margin.left + "," + (height-margin.bottom) +  ")")
+			.attr("transform","translate(" + margin.right + "," + (height-margin.bottom+10) +  ")")
 			.call(xAxis)
 			.append("text")
             .text("人次或人数");
