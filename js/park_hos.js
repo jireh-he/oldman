@@ -13,8 +13,6 @@ var rankList=function(data){
 	.append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
-	tt=d3.map(data,function(d){return d.count});
-	console.log(tt);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
@@ -31,8 +29,8 @@ var rankList=function(data){
 				.append("rect")
 				.attr("width",function(d){return xScale(d.count)-xScale(0)})
 				.attr("height",rectheight)
-				.attr("x",margin.left)
-				.attr("y",function(d,i){return i*rectheight})
+				.attr("x",xScale(0))
+				.attr("y",function(d){return yScale(d.zdm);})
 				.style("fill","steelblue")
 				.attr("transform","translate(" + margin.left + "," + margin.top +  ")");
 	   //添加坐标轴
