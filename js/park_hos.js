@@ -4,6 +4,10 @@
 
 d3.json("js/park_hospital.json",function(error,data){
 	if (error) return console.warn(error);
+	points=d3.map(data.points,function(p){
+		if(p.zdm.indexOf("医院"))
+			return p
+	})
 	rankList(data.points);
 });
 
@@ -29,8 +33,8 @@ var rankList=function(data){
 				.append("rect")
 				.attr("width",function(d){return xScale(d.count)-xScale(0)})
 				.attr("height",rectheight)
-				.attr("x",xScale(0))
-				.attr("y",function(d){return yScale(d.zdm);})
+				.attr("x",margin.left)
+				.attr("y",function(d){return margin.top+yScale(d.zdm);})
 				.style("fill","steelblue");
 	   //添加坐标轴
     var xAxis=d3.svg.axis()
