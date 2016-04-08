@@ -32,7 +32,7 @@ var rankList=function(data){
 				.attr("x",xScale(0))
 				.attr("y",function(d){return yScale(d.zdm);})
 				.style("fill","steelblue")
-				.attr("transform","translate(" + margin.left + "," + margin.top +  ")");
+				.attr("transform","translate("+x+"," + margin.top +y+  ")");
 	   //添加坐标轴
     var xAxis=d3.svg.axis()
         .scale(xScale).orient("bottom");
