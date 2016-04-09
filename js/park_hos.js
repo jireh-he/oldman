@@ -16,18 +16,17 @@ var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
-    .attr("width", width)
+    .attr("width", width*0.9)
     .attr("height", height);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width*0.9-margin.left-margin.right;
 	var yRangeHeight=height-margin.top-margin.bottom;
 	var xScale=d3.scale.linear().domain([0,maxcnt]).range([0,xRangeWidth]);
-	
+	console.log(xScale);
 	var yScale=d3.scale.ordinal().domain(d3.map(data,function(d) {
 		return d.zdm;		
 	}).keys()).rangeRoundBands([0,yRangeHeight],0.1);
-
-	var rectheight=parseInt(yRangeHeight/data.length);
+		
 	var rect=svg.selectAll("rect")
 				.data(data)
 				.enter()
