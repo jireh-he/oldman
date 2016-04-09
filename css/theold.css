@@ -39,3 +39,9 @@ border-radius: 5px;
     stroke: #ccc;
     stroke-width: 1.5px;
   }
+ 
+.MyText {
+	fill: white;
+	text-anchor: middle;
+}
+

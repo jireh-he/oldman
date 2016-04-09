@@ -81,3 +81,31 @@ $.getJSON("js/park_hospital.json",function(data){
     showHoney(map2,points);
 
 });
+
+var showPano=function(d){
+
+	var map3 = new BMap.Map('map3');
+	$("#map3").width(width*0.8).height(height *0.9);
+	map3.addControl(new BMap.NavigationControl());               // 添加平移缩放控件
+	map3.addControl(new BMap.ScaleControl());                    // 添加比例尺控件
+	map3.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
+	map3.enableScrollWheelZoom();                            //启用滚轮放大缩小
+	map3.addControl(new BMap.MapTypeControl());          //添加地图类型控件
+	map3.disable3DBuilding();
+	map3.addTileLayer(new BMap.PanoramaCoverageLayer());
+	
+	map3.centerAndZoom(new BMap.Point(d.lng, d.lat), 20);
+	var point = new BMap.Point(d.lng, d.lat);
+	var marker = new BMap.Marker(point);  // 创建标注
+	map3.addOverlay(marker);              // 将标注添加到地图中
+	var label = new BMap.Label(d.zdm,{offset:new BMap.Size(20,-10)});
+	marker.setLabel(label);
+	marker.addEventListener("click",function(e){
+		var p=e.point;
+		var panorama = new BMap.Panorama('map3');
+		panorama.setPov({heading: -40, pitch: 6});
+		panorama.setPosition(new BMap.Point(p.lng, p.lat));
+	})
+
+}
+
