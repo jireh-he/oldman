@@ -8,7 +8,7 @@ d3.json("js/park_hospital.json",function(error,data){
 	points=data.points.filter(function(p){
 		return (p.zdm.indexOf("医院")>0);
 	}).sort(function(a,b){return (b.count-a.count)}).slice(0,9);
-	margin.left=80;
+	margin.left=120;
 	rankList(points);
 });
 
@@ -16,7 +16,7 @@ var rankList=function(data){
 	d3.select("#paihang svg").remove();
 	var svg=d3.select("#paihang")
 	.append("svg")
-    .attr("width", width*0.9)
+    .attr("width", width)
     .attr("height", height);
 	var maxcnt=d3.max(d3.map(data,function(d){return d.count}).keys());
 	var xRangeWidth=width*0.9-margin.left-margin.right;
