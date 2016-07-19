@@ -1,0 +1,37 @@
+#allmap {
+	height:500px;
+}
+#rightbar{
+	 position:absolute;
+     display:block;
+	 float:right;
+	 z-index: 999;
+	 top:600px;
+	 right:20px;
+    }
+    
+div.legend-item {
+	
+	cursor: pointer;
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+}
+
+.colorbox {   
+    float: left;
+    width: 17px;
+    height: 18px;
+    margin: -3px 6px;
+    padding-bottom: 5px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #b3b3b3;
+}
+
+.item-checkbox {   
+    float: left;
+    color: #fff;
+    display:none;
+}
+
+

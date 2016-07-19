@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>老人出行规律研究（厦门） </title>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="css/bootstrap-theme.min.css" type="text/css" />
+
+<link rel="stylesheet" href="css/new_old.css" type="text/css" />
+
+
+<script type="text/javascript" src="js/jquery-1.12.0.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/d3.min.js"></script>
+
+
+</head>
+<body data-spy="scroll" data-target="#scrollnav">
+<div class="container-fluid">
+
+<header class="row">
+<div class="page-header">
+<h1>
+老人出行规律研究（厦门）
+</h1>
+</div>
+<div class="jumbotron">
+<h1>
+数据挖掘和数据驱动可视化
+</h1>
+<p>
+采用Oracle数据库编程运算分析，通过Django框架发布应用，并采用D3(Data-Driven)技术展示分析图表
+</p>
+<p>
+<a class="btn btn-primary btn-large" href="#overview">图表展示 »</a>
+</p>
+</div>
+</header>
+
+<div class="row">
+
+    <div class="col-md-10">
+    <div id="abstract">
+        <h2>摘要</h2>
+        <p>
+           &nbsp;&nbsp;&nbsp;&nbsp;随着医疗卫生的进步，老人将更加健康长寿，在社会人口中的占比也在增加。许多退休老人有更多的空余时间，也有更好的体力和精力，他们仍是社会群体中较活跃的一群人。
+            他们或者仍在家庭中承担重要责任，如负责照顾学龄前小孩，买菜煮饭，到学校接送小孩等；
+            或者活跃于自己的朋友圈，如到公园健身，走访亲友，参加各种兴趣组织等；
+            或者他们必须照顾自己的生活，到医院看病，到大超市购物。
+            而政府也为年满70周岁的老人提供出行福利，可以办理老人公交卡，享受免费乘坐公交车,
+            因此，年满70周岁的老人出行将以乘坐公交车为主。</p>
+        <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;我们通过分析公交车刷卡数据中老人公交卡的刷卡记录，并关联刷卡时采集到的公交车GPS坐标，就可以了解到70周岁以上的老人在城市出行人群中的占比和活跃程度，
+            也可以了解到他们的出行规律和活动轨迹，从而了解城市老人的居住地点和活动密集地，
+            分析城市公交对老人出行的帮助，并分析一些城市基础服务设施（公园、医院、超市等）所能辐射到的老人活动范围，
+            最终我们可以知道如何通过改善出行交通条件，改善基础配套服务，更好地关爱城市中的老人。
+        </p>
+    </div>
+    <div id="intro">
+        <h2>概要设计</h2>
+       <p>&nbsp;&nbsp;&nbsp;&nbsp;我们分别从公交公司和GPS公司获取2014年5月份厦门E通卡刷卡数据和当月厦门所有公交线路的GPS采集数据。
+           在E通卡数据表中，我们可以获取E通卡的卡号，卡类型，刷卡时间，公交车牌号，公交车线路等信息，该表中包含43303661条刷卡记录；
+           而在GPS数据表中，我们可以获得GPS的设备信息，公交车牌号，GPS采集时间，GPS定位坐标等信息,该表中包含87679544条GPS采集记录。
+       然后，我们通过公交车牌号将两张表关联在一起，但刷卡记录与GPS采集信息是多对多的关系，无法精确匹配，
+           只能根据每张卡刷卡时间在一个允许的范围内（正负1分钟）进行模糊匹配到的GPS采集信息，来确定刷卡时所在的GPS坐标，
+       然后通过搜索每张E通卡刷卡时GPS坐标的附近1公里内最近的车站坐标，获取持有该E通卡的乘客的上车站点坐标，从而可以精确定位每位刷卡乘客的每天活动出行轨迹。
+       而我们通过卡类型，可以筛选出所有老人卡的刷卡记录，因此，我们也可以统计定位全市老人的出行规律和轨迹</p>
+        <h3>总体步骤思维导图</h3>
+    <div id="overview"></div>
+    </div>
+    <div id="diag">
+<div>
+<h3>厦门市老人服务设施分析</h3>
+
+<div id='allmap'>
+
+</div>
+<!-- start of rightbar -->
+    <div class="panel panel-default" id="rightbar">            
+     <div class="panel-heading">
+ <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#hospital" aria-controls="hospital" role="tab" data-toggle="tab">医院</a></li>
+    <li role="presentation"><a href="#park" aria-controls="park" role="tab" data-toggle="tab">公园</a></li>
+    <li role="presentation"><a href="#shop" aria-controls="shop" role="tab" data-toggle="tab">购物</a></li>
+    <li role="presentation"><a href="#school" aria-controls="school" role="tab" data-toggle="tab">学校</a></li>
+  </ul>
+     </div>
+  <div class="panel-body">
+<!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="hospital">
+    <ul class='nav nav-pills nav-stacked'>
+    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="batchHospitals();">显示医院</a></li>
+    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="batchStations();">周边公交</a></li>
+    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="hospitalAnalyze();">交通便利度</a></li>
+    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap'  onclick="downLoadHospitals(this);">数据下载</a></li>
+    </ul>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="park">公园</div>
+    <div role="tabpanel" class="tab-pane" id="shop">购物</div>
+    <div role="tabpanel" class="tab-pane" id="school">学校</div>
+  </div>
+  </div>         
+       
+</div><!--end of rightbar--> 
+
+</div>
+ 
+    </div>
+</div>
+<!-- start .modal -->
+<div class="modal fade bs-example-modal-lg" id='modalChart' tabindex="-1" role="dialog" aria-labelledby="modalChartLabel">
+  <div class="modal-dialog  modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalChartLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <div id="modalchartbody" style="height: 400px">
+        </div>
+      </div>
+      <div class="modal-footer">
+
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="col-md-2" id="scrollnav">
+
+<ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125" data-offset-bottom="200">
+<li class="active">
+<a href="#abstract">摘要</a>
+</li>
+<li>
+<a href="#intro">概要设计</a>
+</li>
+<li>
+<a href="#diag">统计分析</a>
+
+</li>
+</ul>
+</div>
+
+</div>
+    <div class="col-md-12">
+ <footer class="row text-center" id="footer">
+<hr>
+<p>&copy; 2016  <b>何以勒作品 ——城市交通研究</b> 保留所有版权 </p>
+
+
+
+                                <div>
+
+                                        <ul class="col-md-4 nav nav-pills nav-stacked">
+
+                                                <li><a href="#">网页设计</a></li>
+
+                                                <li><a href="#">系统开发</a></li>
+
+                                                <li><a href="#">网站调优</a></li>
+
+                                        </ul>
+
+                                        <ul class="col-md-4 nav nav-stacked">
+
+                                                <li><a href="#">系统安装</a></li>
+
+                                                <li><a href="#">数据库安装</a></li>
+
+                                                <li><a href="#">数据分析挖掘</a></li>
+
+                                        </ul>
+
+                                        <ul class="col-md-4 nav nav-stacked">
+
+                                                <li><a href="/">首页</a></li>
+
+                                                <li><a href="about.html">关于我们</a></li>
+
+                                                <li><a href="#">友情链接</a></li>
+
+                                        </ul>
+
+                                </div>
+
+
+
+                        </footer>
+
+                        <div class="clear"></div>
+
+        </div><!-- /#footerwrapper -->
+
+
+</div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./js/jquery-1.12.0.min.js"></script>
+     <script src="./js/echarts.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=BFcd9e84753ab8dcef34748bc43f952d"></script>
+    <script src="./js/bootstrap.min.js"></script>
+	<script src="./js/new_oldman.js"></script>
+
+</body>
+</html>
