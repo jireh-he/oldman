@@ -50,7 +50,7 @@ var loadBDExtMap=function(cityname){
 var batchHospitals=function(){
 	$.ajax({'url':'../data/hospitals.csv',
 		'dataType':'text',
-		'type':'POST',
+		'type':'GET',
 		}).done(function(csvdata){
 		var rows=csvdata.split('\n');
 		hospitals=[];
