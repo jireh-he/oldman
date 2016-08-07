@@ -114,6 +114,8 @@ var showHospitals=function(){
 	var hosoption=makeOption('厦门市老人服务设施分布图', [hospseries]);
     var container = BMapExt.getEchartsContainer();
     myChart = BMapExt.initECharts(container);
+
+
     window.onresize = myChart.resize;    
     BMapExt.setOption(hosoption, true);
 	
@@ -284,104 +286,126 @@ var searchWalk=function(hospital,station,stationTitle){
 var hospitalAnalyze=function(){
 	$('#modalChart').on('shown.bs.modal',function(e){
 		$(this).find('.modal-title').text('医院便利性分析');
-		require([
-		         'echarts',
-		         'echarts/chart/radar',],
-		         function(ec){
-			var modalchart=ec.init($('#modalchartbody')[0]);
-			var resdata=makeAnalyzeData();
-			var result=resdata[0];
-			var maxdata=resdata[1];
-			var modaloption = {
-				    color : (function (){
-				        var zrColor = require('zrender/tool/color');
-				        return zrColor.getStepColors('yellow', 'red', 28);
-				    })(),
-				    title : {
-				        text: '医院与周边公交站位置分析',
-				        x:'right',
-				        y:'bottom'
-				    },
-				    tooltip : {
-				        trigger: 'item',
-				        backgroundColor : 'rgba(0,0,250,0.2)'
-				    },
-				    legend: {
-				       // orient : 'vertical',
-				        //x : 'center',
-				    	show:false,
-				        data: function (){
-				                var list = [];
-				               for(var h in result){
-				            	   list.push(h);
-				               }
-				                return list;
-				            }()
-				    },
-				    toolbox: {
-				        show : true,
-				        orient : 'vertical',
-				        y:'center',
-				        feature : {
-				            mark : {show: true},
-				            dataView : {show: true, readOnly: false},
-				            restore : {show: true},
-				            saveAsImage : {show: true}
-				        }
-				    },
-				   polar : [
-				       {
-				           indicator : [
-				               { text: '站点数量', max: maxdata[0]},
-				               { text: '公交线路数', max: maxdata[1]},
-				               { text: '500米可选择数', max: maxdata[2]},
-				               { text: '300秒可选择数', max: maxdata[3]}
-				            ],
-				            center : ['50%', 200],
-				            radius : 150
-				        }
-				    ],
-				    calculable : false,
-				    series : (function (){
-				    	
-				        var series = [];
-				        for (var h in result) {
-				            series.push({
-				                name:h+'与周边公交站分析',
-				                type:'radar',
-				                symbol:'none',
-				                itemStyle: {
-				                    normal: {
-				                        lineStyle: {
-				                          width:1
-				                        }
-				                    },
-				                    emphasis : {
-				                        areaStyle: {color:'rgba(0,250,0,0.3)'}
-				                    }
-				                },
-				                data:[
-				                  {
-				                    value:[
-				                        result[h][0],
-				                        result[h][1],
-				                        result[h][2],
-				                        result[h][3]
-				                    ],
-				                    name:h
-				                  }
-				                ]
-				            })
-				        }
-				        return series;
-				    })()
-				};
-			
-			window.onresize = modalchart.resize;
-			modalchart.setOption(modaloption);
-			
-		});
+		var resdata=makeAnalyzeData();
+		showRadar('modalchartbody',resdata);
+		econfig=require('echarts/config');
+		myChart.on(econfig.EVENT.CLICK,function(param){
+		    	if(param.seriesName=='医院'){
+		    		var hosp=param.name.split(',')[0];
+		    		var hospls=resdata[0];
+		    		var newls={}
+		    		for(h in hospls){
+		    			if(h==hosp){
+		    				newls[h]=hospls[h];
+		    				break;
+		    			}
+		    		}
+		    		//console.log(newls);
+		    		resdata[0]=newls;
+		    		$('#modalChart').on('shown.bs.modal',function(e){
+		    			showRadar('modalchartbody',resdata);
+		    		}).modal();			
+		    		
+		    	}
+		    });
 	}).modal();
+};
+var showRadar=function(showdiv,resdata){
+	require([
+	         'echarts',
+	         'echarts/chart/radar',],
+	         function(ec){
+		var modalchart=ec.init($('#'+showdiv)[0]);
+		var result=resdata[0];
+		var maxdata=resdata[1];
+		var modaloption = {
+			    color : (function (){
+			        var zrColor = require('zrender/tool/color');
+			        return zrColor.getStepColors('green', 'red', 28);
+			    })(),
+			    title : {
+			        text: '医院与周边公交站位置分析',
+			        x:'right',
+			        y:'bottom'
+			    },
+			    selected:{},
+			    tooltip : {
+			        trigger: 'item',
+			        backgroundColor : 'rgba(0,0,250,0.2)'
+			    },
+			    legend: {
+			       // orient : 'vertical',
+			        //x : 'center',
+			    	show:false,
+			        data: function (){
+			                var list = [];
+			               for(var h in result){
+			            	   list.push(h);
+			               }
+			                return list;
+			            }()
+			    },
+			    toolbox: {
+			        show : true,
+			        orient : 'vertical',
+			        y:'center',
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			   polar : [
+			       {
+			           indicator : [
+			               { text: '站点数量', max: maxdata[0]},
+			               { text: '公交线路数', max: maxdata[1]},
+			               { text: '500米可选择数', max: maxdata[2]},
+			               { text: '300秒可选择数', max: maxdata[3]}
+			            ],
+			            center : ['50%', 200],
+			            radius : 150
+			        }
+			    ],
+			    calculable : false,
+			    series : (function (){
+			    	
+			        var series = [];
+			        for (var h in result) {
+			            series.push({
+			                name:h,
+			                type:'radar',
+			                symbol:'none',
+			                itemStyle: {
+			                    normal: {
+			                        lineStyle: {
+			                          width:1
+			                        }
+			                    },
+			                    emphasis : {
+			                        areaStyle: {color:'rgba(0,250,0,0.3)'}
+			                    }
+			                },
+			                data:[
+			                  {
+			                    value:[
+			                        result[h][0],
+			                        result[h][1],
+			                        result[h][2],
+			                        result[h][3]
+			                    ],
+			                    name:h
+			                  }
+			                ]
+			            })
+			        }
+			        return series;
+			    })()
+			};
+		modalchart.setOption(modaloption);
+		window.onresize = modalchart.resize;
+	});
 }
 
 var makeAnalyzeData=function(){
