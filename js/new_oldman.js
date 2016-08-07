@@ -48,9 +48,9 @@ var loadBDExtMap=function(cityname){
 
 //批量获取医院数据
 var batchHospitals=function(){
-	$.ajax({'url':'../data/hospitals.csv',
+	$.ajax({'url':'data/hospitals.csv',
 		'dataType':'text',
-		'type':'GET',
+		'type':'POST',
 		}).done(function(csvdata){
 		var rows=csvdata.split('\n');
 		hospitals=[];
