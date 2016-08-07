@@ -48,9 +48,9 @@ var loadBDExtMap=function(cityname){
 
 //批量获取医院数据
 var batchHospitals=function(){
-	$.ajax({'url':'data/hospitals.csv',
+	$.ajax({'url':'../data/hospitals.csv',
 		'dataType':'text',
-		'type':'GET',
+		'type':'POST',
 		}).done(function(csvdata){
 		var rows=csvdata.split('\n');
 		hospitals=[];
@@ -321,7 +321,7 @@ var showRadar=function(showdiv,resdata){
 		var modaloption = {
 			    color : (function (){
 			        var zrColor = require('zrender/tool/color');
-			        return zrColor.getStepColors('green', 'red', 28);
+			        return zrColor.getStepColors('orange', 'red', 28);
 			    })(),
 			    title : {
 			        text: '医院与周边公交站位置分析',
