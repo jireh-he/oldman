@@ -57,8 +57,8 @@ var batchHospitals=function(){
 		for(r in rows){
 			if(r==0)
 				continue;
-				var add=rows[r].split(',');
-				searchPoint(add, '厦门');
+			var add=rows[r].split(',');
+			searchPoint(add, '厦门');
 			}
 });
 
@@ -286,7 +286,7 @@ var searchWalk=function(hospital,station,stationTitle){
 var hospitalAnalyze=function(){
 	$('#modalChart').on('shown.bs.modal',function(e){
 		$(this).find('.modal-title').text('医院便利性分析');
-		var resdata=makeAnalyzeData();
+		var resdata=makeHosAnalyzeData();
 		showRadar('modalchartbody',resdata);
 		econfig=require('echarts/config');
 		myChart.on(econfig.EVENT.CLICK,function(param){
@@ -408,7 +408,7 @@ var showRadar=function(showdiv,resdata){
 	});
 }
 
-var makeAnalyzeData=function(){
+var makeHosAnalyzeData=function(){
 	var result={},maxstcnt=0,maxbuscnt=0,maxbuschoice=0,maxtimechoice=0;
 	for(var h in stations){
 		var stcnt=0,buscnt=0,buschoice=0,timechoice=0;
@@ -436,10 +436,14 @@ var makeAnalyzeData=function(){
 		
 		if(maxbuschoice<buschoice) maxbuschoice=buschoice;
 		if(maxtimechoice<timechoice) maxtimechoice=timechoice;
+		//计算面积
+		area=(stcnt+buschoice)*(buscnt*timechoice)/2.0;
 		result[h].push(stcnt);
 		result[h].push(buscnt);
 		result[h].push(buschoice);
 		result[h].push(timechoice);
+		result[h].push(area);
+		
 	}
 	return [result,[maxstcnt,maxbuscnt,maxbuschoice,maxtimechoice]];
 }

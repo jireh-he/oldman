@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,6 +88,20 @@
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="hospital">
     <ul class='nav nav-pills nav-stacked'>
+    <li role="presentation" class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="adminArea" data-toggle="dropdown">
+    	行政区域
+    <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="adminArea">
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">思明区</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">湖里区</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">海沧区</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">集美区</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">同安区</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">翔安区</a></li>
+    </ul>
+    </li>
     <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="batchHospitals();">显示医院</a></li>
     <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="batchStations();">周边公交</a></li>
     <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="hospitalAnalyze();">交通便利度</a></li>
