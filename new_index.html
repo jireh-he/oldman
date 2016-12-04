@@ -76,7 +76,7 @@
     <div class="panel panel-default" id="rightbar">            
      <div class="panel-heading">
  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
+  <ul id="navtabs" class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="#hospital" aria-controls="hospital" role="tab" data-toggle="tab">医院</a></li>
     <li role="presentation"><a href="#park" aria-controls="park" role="tab" data-toggle="tab">公园</a></li>
     <li role="presentation"><a href="#shop" aria-controls="shop" role="tab" data-toggle="tab">购物</a></li>
@@ -87,30 +87,17 @@
 <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="hospital">
-    <ul class='nav nav-pills nav-stacked'>
-    <li role="presentation" class="dropdown">
-    <button class="btn btn-default dropdown-toggle" type="button" id="adminArea" data-toggle="dropdown">
-    	行政区域
-    <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="adminArea">
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">思明区</a></li>
-    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">湖里区</a></li>
-    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">海沧区</a></li>
-    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">集美区</a></li>
-    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">同安区</a></li>
-    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">翔安区</a></li>
-    </ul>
-    </li>
-    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="batchHospitals();">显示医院</a></li>
-    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="batchStations();">周边公交</a></li>
-    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap' onclick="hospitalAnalyze();">交通便利度</a></li>
-    <li role="presentation" onclick="$(this).addClass('active').siblings().removeClass('active');"><a href='#allmap'  onclick="downLoadHospitals(this);">数据下载</a></li>
-    </ul>
+	<div id="treeview-hospital" class="treeview"></div>
     </div>
-    <div role="tabpanel" class="tab-pane" id="park">公园</div>
-    <div role="tabpanel" class="tab-pane" id="shop">购物</div>
-    <div role="tabpanel" class="tab-pane" id="school">学校</div>
+    <div role="tabpanel" class="tab-pane" id="park">
+<div id="treeview-park" class="treeview"></div>
+</div>
+    <div role="tabpanel" class="tab-pane" id="shop">
+<div id="treeview-shop" class="treeview"></div>
+</div>
+    <div role="tabpanel" class="tab-pane" id="school">
+    <div id="treeview-school" class="treeview"></div>
+    </div>
   </div>
   </div>         
        
@@ -214,7 +201,10 @@
      <script src="./js/echarts.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=BFcd9e84753ab8dcef34748bc43f952d"></script>
     <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap-treeview.min.js"></script>
 	<script src="./js/new_oldman.js"></script>
-
+	<script src="./js/treedata.js"></script>
+	<script src="./js/tree.js"></script>
+	<script src="./js/moduls.js"></script>
 </body>
 </html>

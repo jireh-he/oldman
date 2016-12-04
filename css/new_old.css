@@ -6,32 +6,32 @@
      display:block;
 	 float:right;
 	 z-index: 999;
-	 top:600px;
+	 top:550px;
 	 right:20px;
+	 height:420px;
+	 width:300px;
+	 overflow-y:auto;
     }
-    
-div.legend-item {
-	
-	cursor: pointer;
-	padding-bottom: 5px;
-	margin-bottom: 5px;
+.treeview {
+	font-size:10px;
+}    
+.treeview .list-group-item {
+	cursor: pointer
 }
 
-.colorbox {   
-    float: left;
-    width: 17px;
-    height: 18px;
-    margin: -3px 6px;
-    padding-bottom: 5px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #b3b3b3;
+.treeview span.indent {
+	margin-left: 10px;
+	margin-right: 10px
 }
 
-.item-checkbox {   
-    float: left;
-    color: #fff;
-    display:none;
+.treeview span.icon {
+	width: 12px;
+	margin-right: 5px
+}
+
+.treeview .node-disabled {
+	color: silver;
+	cursor: not-allowed
 }
 
 

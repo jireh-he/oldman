@@ -1,4 +1,4 @@
-var BMapExt,BDMap,myChart,bdGEO,hospitals,stations;
+var BMapExt,BDMap,myChart,bdGEO,hospitals,stations,exportdata;
 $(document).ready(function(){
 	require.config({
 	    paths: {
@@ -20,6 +20,17 @@ $(document).ready(function(){
 	    });
 	
 	loadBDExtMap('厦门');
+	$("#navtabs a").click(function(e){
+		e.preventDefault();
+		tab=e.currentTarget.text;
+		if(tab=='医院'){
+			hospitalTree();
+		}
+		if(tab=='公园'){
+			parkTree();
+		}
+	});
+	$("#navtabs a").first().click();
 
 });
 //加载指定城市的百度地图
@@ -47,145 +58,305 @@ var loadBDExtMap=function(cityname){
 };
 
 //批量获取医院数据
-var batchHospitals=function(){
+var batchHospitals=function(node){
+	if(hospitals){
+		var topnode=$('#treeview-hospital').treeview('getNode',node.nodeId);
+		topnode.tags=[hospitals.length];
+	}
 	$.ajax({'url':'data/hospitals.csv',
 		'dataType':'text',
 		'type':'GET',
 		}).done(function(csvdata){
 		var rows=csvdata.split('\n');
 		hospitals=[];
+		cnt=0;
 		for(r in rows){
 			if(r==0)
 				continue;
-			var add=rows[r].split(',');
-			searchPoint(add, '厦门');
-			}
+			var row=rows[r].split(',');
+			var mf=MedicalFacility(row);
+			searchPoint(mf, '厦门');
+			cnt++;
+		}
+		var topnode=$('#treeview-hospital').treeview('getNode',node.nodeId);
+		topnode.tags=[cnt];
+		topnode=$('#treeview-hospital').treeview('expandNode',node.nodeId);
+		
+		
 });
 
 }
-//下载医院数据
-var downLoadHospitals=function(alink){
-	if(hospitals!=undefined&&stations!=undefined){
-		var csv=[];
-		var title=['医院名称','医院地址','区域','归属','医院经度','医院纬度','公交站','公交站经度','公交站纬度','经停线路','步行距离(米)','步行时间(秒)','步行路径'];
-		csv.push(title.join(','));
-		for(var h in hospitals){
-			var add=hospitals[h][0];
-			var p=hospitals[h][1];
-			var st=stations[add[0]];
-			for(s in st){
-				var r=[];
-				r.push(add.join(','));
-				r.push(p.lng);
-				r.push(p.lat);
-				r.push(s);
-				r.push(st[s].join(','));
-				csv.push(r.join(',').replace('\n','').replace('\r',''));
-			}
-			
-		}
 
-		var csvstr=csv.join('\n');
-		csvstr=encodeURIComponent(csvstr);
-		alink.href="data:text/csv;charset=utf-8,\ufeff"+csvstr;
-		alink.download='hospitals.csv';
-		alink.click();
-		
-	}
-}
+
 //显示医院坐标点
-var showHospitals=function(){
-	if(hospitals==undefined)
+var showHospitals=function(showNodes){
+	if(showNodes.length==0)
+	{	myChart.clear();
 		return;
-	var geolist={},geodata=[];
-	for(i in hospitals){
-		var add=hospitals[i][0];
-		var point=hospitals[i][1];
-		if(point==null)
-		{
-			console.log(add,'找不到');
-			continue;
-		}
-		geolist[add[0]+','+add[1]]=[point.lng,point.lat];
-		geodata.push({name:add[0]+','+add[1]});
 	}
+	var geolist={},geodata=[];
+	for(var i in showNodes){
+		geolist[showNodes[i].FacilityName]=[showNodes[i].Longitude,showNodes[i].Latitude];
+		geodata.push({name:showNodes[i].FacilityName,
+			FacilityAddress:showNodes[i].FacilityAddress,
+			FacilityType:showNodes[i].FacilityType,
+			QualityClass:showNodes[i].QualityClass,
+			AdminArea:   showNodes[i].AdminArea,   
+			Affiliation: showNodes[i].Affiliation, 
+			Beds:        showNodes[i].Beds,        
+			StaffNum:    showNodes[i].StaffNum,    
+			Floorspace:  showNodes[i].Floorspace   
+		});
+		}
 	var hospseries=makeSeries('医院', geolist, geodata);
-	hospseries.markPoint.effect.show=true;
 	var hosoption=makeOption('厦门市老人服务设施分布图', [hospseries]);
+	hospseries.tooltip={
+			trigger:'item',
+			formatter:function(params){
+				//console.log(params);
+				var showstr='名称：'+params.name+'<br/>';
+				showstr+='地址:'+params.data.FacilityAddress+'<br/>';
+				showstr+='机构类别:'+params.data.FacilityType+'<br/>';
+				showstr+='资质等级:'+params.data.QualityClass+'<br/>';
+				showstr+='实有床位:'+params.data.Beds+'<br/>';
+				showstr+='医护人数:'+params.data.StaffNum+'(人)<br/>';
+				showstr+='建筑面积:'+params.data.Floorspace+'（平米)';
+				return showstr;
+			},
+	};
     var container = BMapExt.getEchartsContainer();
     myChart = BMapExt.initECharts(container);
-
-
     window.onresize = myChart.resize;    
     BMapExt.setOption(hosoption, true);
-	
-}
-//根据地址搜索坐标
-var searchPoint=function(add,cityname){
-	bdGEO.getPoint(add[1],function(point){
-		var row=[];
-		row.push(add);
-		row.push(point);
-		hospitals.push(row);
-		if(hospitals.length%20==0||hospitals.length>110)
-			showHospitals();
+    myChart.on('click',function(param){
+    	var sname=param.seriesName;
+    	series=myChart.getSeries();
+    	var point=myChart.getSeries()[param.seriesIndex].geoCoord[param.name];
+    	var bdp=new BMap.Point(point[0],point[1]);
+    	if(sname=='医院'){
+    		
+    		if(!isEmptyObject(stations)){
+  
+    			var start={name:param.name};
+            	var stls=stations[param.name];
+            	var linedata=[];
+            	for(var n in stls){
+            		var r=[];
+            		r.push(start);
+            		r.push({name:n});
+            		linedata.push(r);
+            	}
+            	console.log(linedata);
+    			series[param.seriesIndex].markLine={
+    					smooth:true,
+    	                effect : {
+    	                    show: true,
+    	                    scaleSize: 1,
+    	                    period: 30,
+    	                    color: 'blue',
+    	                    shadowBlur: 10
+    	                },
+    	                itemStyle : {
+    	                    normal: {
+    	                        borderWidth:1,
+    	                        lineStyle: {
+    	                            type: 'solid',
+    	                            shadowBlur: 10
+    	                        }
+    	                    }
+    	                },
+    	                data:linedata,
+    			};
+    			myChart.setSeries(series);
+        		window.onresize = myChart.resize;
+        		BDMap.centerAndZoom(bdp,16);
+    			
+    		}
+    	
+    	}
+    });
 
+}
+
+//根据地址搜索坐标
+var searchPoint=function(row,cityname){
+	bdGEO.getPoint(row.FacilityAddress,function(point){
+		//console.log(point);
+		if(point){
+		row.Latitude=point.lat;
+		row.Longitude=point.lng;
+		hospitals.push(row);
+		}else{
+			console.log(row);
+		}
 	},cityname);
 }
+
+var changeGps=function(tree,node){
+	if((typeof(exportdata)=="undefined")||(exportdata.length==0)){
+		exportdata=[];
+	}else 
+	{
+		tree.treeview('getNode',node.nodeId).tags=[exportdata.length];
+		return exportdata.length;
+	}
+	for(var h in hospitals){
+		var st=stations[hospitals[h].FacilityName];
+		for(s in st){
+			bd2GPS(hospitals[h],st[s],tree,node);	
+		}		
+	}
+}
+var bd2GPS=function(hospital,station,tree,node){
+	var r=[];
+	//医院信息
+	r.push(hospital.FacilityName);
+	r.push(hospital.FacilityAddress);
+	r.push(hospital.FacilityType);
+	r.push(hospital.QualityClass);
+	r.push(hospital.AdminArea);
+	r.push(hospital.Affiliation);
+	r.push(hospital.Beds);
+	r.push(hospital.StaffNum);
+	r.push(hospital.Floorspace);
+	r.push(hospital.Longitude); //医院经度
+	r.push(hospital.Latitude);  //医院纬度
+
+	//公交站信息
+	r.push(station.StationName);
+	r.push(station.Longitude);    //车站经度
+	r.push(station.Latitude);     //车站纬度
+	r.push(station.BusLines);
+	r.push(station.Distance);
+	r.push(station.Duration);
+	r.push(station.Pathstr);
+	var hosbdpoint=new BMap.Point(r[9],r[10]);
+	var busbdpoint=new BMap.Point(r[12],r[13]);
+    
+	//将百度坐标转换成GPS坐标
+    var convertor = new BMap.Convertor();
+    var pointArr = [];
+    pointArr.push(hosbdpoint);
+    pointArr.push(busbdpoint);
+    convertor.translate(pointArr, 3, 5, function (data){
+	      if(data.status === 0) {
+		    	//console.log(data.points);
+		    	r[9]=2*r[9]-data.points[0].lng;
+		    	r[10]=2*r[10]-data.points[0].lat;
+		    	r[12]=2*r[12]-data.points[1].lng;
+		    	r[13]=2*r[13]-data.points[1].lat;
+		    	exportdata.push(r.join(',').replace('\n','').replace('\r',''));
+		    	tree.treeview('getNode',node.nodeId).tags=[exportdata.length];
+	      	}
+		    });
+}
+
+//下载医院数据
+var downLoadHospitals=function(){
+	if(hospitals!=undefined&&stations!=undefined){
+		var csv=[];
+		var title=['医院名称','医院地址','机构类别','资质等级','行政区划','设置单位','实用床位','卫生技术人员','房屋面积(米)','医院经度','医院纬度','公交站','公交站经度','公交站纬度','经停线路','步行距离(米)','步行时间(秒)','步行路径'];
+		csv.push(title.join(','));
+		if(exportdata.length>600)
+		{
+			csv=csv.concat(exportdata);
+			exportdata=[];
+		}
+		var csvstr=csv.join('\n');
+		csvstr=encodeURIComponent(csvstr);
+		var alink=document.createElement("a");
+		alink.href="data:text/csv;charset=utf-8,\ufeff"+csvstr;
+		alink.download='hospitals.csv';
+		document.body.appendChild(alink);
+		alink.click();
+		document.body.removeChild(alink);
+	}
+}
+
 //搜索医院周边公交站
-var searchStation=function(hospital){
+//hospital模型就是MedicalFacility
+var searchStation=function(hospital,tree,node){
 	var s={};
 	var j=1;
 	var searchOptions={
 			onSearchComplete:function(results){
 				if (localsearch.getStatus() == BMAP_STATUS_SUCCESS){
+					//console.log(results);
 					for (var i = 0; i < results.getCurrentNumPois(); i ++){
-						s[results.getPoi(i).title]=[results.getPoi(i).point.lng,results.getPoi(i).point.lat,results.getPoi(i).address];
-						stations[hospital[0][0]]=s;
-						searchWalk(hospital,s[results.getPoi(i).title],results.getPoi(i).title);
+						s[results.getPoi(i).title]=BusStation(results.getPoi(i));
+						stations[hospital.FacilityName]=s;
+						searchWalk(hospital,s[results.getPoi(i).title]);
 					}
 	                if(results.getPageIndex!=results.getNumPages())  
 	                {
 	                        localsearch.gotoPage(j);
 	                        j=j+1;
 	                }
-	                
-	                showStations();
-	                
+	                //计算stations的数量
+	                var cnt=0;
+	                for(var e in stations){
+	                	cnt++
+	                }
+	                tree.treeview('getNode',node.nodeId).tags=[cnt];
 				}
 			}
 		
 		};
-	var localsearch=new BMap.LocalSearch(hospital[1],searchOptions);
-	localsearch.searchNearby('公交站',hospital[1],400);
+	var point=new BMap.Point(hospital.Longitude,hospital.Latitude);
+	var localsearch=new BMap.LocalSearch(point,searchOptions);
+	localsearch.searchNearby('公交站',point,400);
 }
 
-//批量搜索公交站
-var batchStations=function(){
-	stations={};
+//批量搜索公交站，更新总的公交站数量到目录树
+var batchStations=function(tree,node){
+	stations={};	
+
 	for(var i in hospitals){
-		searchStation(hospitals[i]);
+		searchStation(hospitals[i],tree,node);
 	}
+
+	
 }
 //显示公交站
-var showStations=function(){
-	if(stations==undefined)
+var showStations=function(showNodes){
+	if(showNodes.length==0)
 		return;
 	var geolist={},geodata=[];
-	for(i in stations){
-
-		for(s in stations[i]){
-
-			st=stations[i][s];
-			geolist[s+','+st[2]]=[st[0],st[1]];
-			geodata.push({name:s+','+st[2]});
-		}
+	for(i in showNodes){
+			st=stations[showNodes[i].FacilityName];
+			for(var x in st){
+				var station=st[x];
+				geolist[station.StationName]=[station.Longitude,station.Latitude];
+			geodata.push({name:station.StationName,
+				Distance:station.Distance,
+				Duration:station.Duration,
+				BusLines:station.BusLines,
+				Hospital:showNodes[i].FacilityName});
+			}
 	}
 	var oldseries=myChart.getSeries()[0];
 
 	var stationseries=makeSeries('公交站', geolist, geodata);
-	stationseries.markPoint.symbol='triangle';
-	stationseries.markPoint.symbolSize=1;
+	stationseries.markPoint.symbol='image://./images/busstop.jpg';
+	stationseries.markPoint.symbolSize=5;
+	stationseries.tooltip={
+			trigger:'item',
+			formatter:function(params){
+				showstr='公交站:'+params.name+'<br/>';
+				showstr+='附近医院：'+params.data.Hospital+'<br/>';
+				showstr+='步行距离：'+params.data.Distance+'(米）<br/>';
+				showstr+='步行时间:'+params.data.Duration+'（秒)<br/>';
+				var lines=params.data.BusLines.split(';');
+				for(var l=0;l<lines.length;l++){
+					if(l>0&&l%5==0){
+						lines.splice(l,0,'<br/>');
+					}
+				}
+				lines=lines.join(';');
+				showstr+='途经公交：'+lines+'<br/>';
+				return showstr;
+			}
+	}
 	var newoption=makeOption('厦门市老人服务设施分布图', [oldseries,stationseries]);
     window.onresize = myChart.resize;    
     BMapExt.setOption(newoption, true);
@@ -232,11 +403,11 @@ var makeSeries=function(serialname,geolist,geodata){
 	    	data:[],
 	    	geoCoord:geolist,
 	    	markPoint:{
-	    		symbol:'diamond',
-	            symbolSize : 3,
+	    		symbol:'image://./images/cross.jpg',
+	            symbolSize :10,
                 effect : {
                     show: false,
-                    shadowBlur : 0
+                    shadowBlur : false
                 },
                 itemStyle:{
                     normal:{
@@ -250,10 +421,9 @@ var makeSeries=function(serialname,geolist,geodata){
 
 
 //查找从医院到公交站的步行路径
-var searchWalk=function(hospital,station,stationTitle){
-	var add=hospital[0];
-	var hpoint=hospital[1];
-	var stpoint=new BMap.Point(station[0],station[1]);
+var searchWalk=function(hospital,station){
+	var hpoint=new BMap.Point(hospital.Longitude,hospital.Latitude);
+	var stpoint=new BMap.Point(station.Longitude,station.Latitude);
 	var walkOptions={
 			onSearchComplete:function(result){
 				if (walking.getStatus() == BMAP_STATUS_SUCCESS){
@@ -268,13 +438,10 @@ var searchWalk=function(hospital,station,stationTitle){
 				for(var i in paths){
 					pathstr+=paths[i].lng+'|'+paths[i].lat+';'
 				}
-				
-				var newstation=station;
-				newstation.push(distance);
-				newstation.push(duration);
-				newstation.push(pathstr);
-				stations[add[0]][stationTitle]=newstation;
-				
+				station.Distance=distance;
+				station.Duration=duration;
+				station.Pathstr=pathstr;
+				stations[hospital.FacilityName][station.StationName]=station;			
 				}
 			}
 	};
@@ -447,8 +614,14 @@ var makeHosAnalyzeData=function(){
 	}
 	return [result,[maxstcnt,maxbuscnt,maxbuschoice,maxtimechoice]];
 }
-
-
+//判断数据字典对象是否为空
+function isEmptyObject(o){
+	var t;
+	for(t in o){
+		return !1;
+	}
+	return !0;
+}
 
 
 
