@@ -261,7 +261,7 @@ var showDetailRoute=function(param){
 		myChart.setSeries(series);
 		window.onresize = myChart.resize;
 		var bdp=new BMap.Point(geolist[param.name+'1'][0],geolist[param.name+'0'][1]);
-		BDMap.centerAndZoom(bdp,18);
+		BDMap.centerAndZoom(bdp,16);
 		return true;						
 		
 }
