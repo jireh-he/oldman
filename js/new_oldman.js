@@ -197,7 +197,7 @@ var showHospitaltoStations=function(showNodes){
 		};
 		myChart.setSeries(series);
 		window.onresize = myChart.resize;
-		
+		BDMap.centerAndZoom('厦门',12);
 	}
 }
 
