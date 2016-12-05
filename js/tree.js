@@ -86,6 +86,7 @@ var updateShowStations=function(tree){
 		}
 	}
 	showStations(leaves);
+	showHospitaltoStations(leaves);
 	return leaves;
 }
 
@@ -129,6 +130,12 @@ var hospitalTree=function(){
         		if(isEmptyObject(stations)){
         		batchStations(hostree,node);
         		}else{
+        			 //计算stations的数量
+	                var cnt=0;
+	                for(var e in stations){
+	                	cnt++
+	                }
+	                hostree.treeview('getNode',node.nodeId).tags=[cnt];
         			updateShowStations(hostree);
         			
         		}

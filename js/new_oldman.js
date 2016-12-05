@@ -80,7 +80,7 @@ var batchHospitals=function(node){
 		}
 		var topnode=$('#treeview-hospital').treeview('getNode',node.nodeId);
 		topnode.tags=[cnt];
-		topnode=$('#treeview-hospital').treeview('expandNode',node.nodeId);
+		topnode=$('#treeview-hospital').treeview('selectNode',node.nodeId);
 		
 		
 });
@@ -114,6 +114,15 @@ var showHospitals=function(showNodes){
 			trigger:'item',
 			formatter:function(params){
 				//console.log(params);
+				if(params.name.split('>').length==2){
+					var start=$.trim(params.name.split('>')[0]);
+					var end=$.trim(params.name.split('>')[1]);
+					//console.log(start,end);
+					var showstr=params.name+'<br/>'
+					+'全程：'+stations[start][end].Distance+'（米）<br/>'
+					+'花费：'+stations[start][end].Duration+'（秒）<br/>';
+					return showstr;
+				}
 				var showstr='名称：'+params.name+'<br/>';
 				showstr+='地址:'+params.data.FacilityAddress+'<br/>';
 				showstr+='机构类别:'+params.data.FacilityType+'<br/>';
@@ -129,31 +138,109 @@ var showHospitals=function(showNodes){
     window.onresize = myChart.resize;    
     BMapExt.setOption(hosoption, true);
     myChart.on('click',function(param){
+    	//console.log(param);
     	var sname=param.seriesName;
-    	series=myChart.getSeries();
-    	var point=myChart.getSeries()[param.seriesIndex].geoCoord[param.name];
-    	var bdp=new BMap.Point(point[0],point[1]);
+    	var series=myChart.getSeries();
+    	//点击连线出现详细路径
+    	if(param.name.split('>').length==2)
+    	{
+    		showDetailRoute(param);
+    		return;
+    	}
+
+    	//点击医院出现路径图
     	if(sname=='医院'){
-    		
-    		if(!isEmptyObject(stations)){
-  
-    			var start={name:param.name};
-            	var stls=stations[param.name];
-            	var linedata=[];
-            	for(var n in stls){
-            		var r=[];
-            		r.push(start);
-            		r.push({name:n});
-            		linedata.push(r);
-            	}
-            	console.log(linedata);
-    			series[param.seriesIndex].markLine={
+    		showHospitaltoStations(param.name);
+    	}
+    });
+
+}
+//批量显示医院到车站的路径图
+var showHospitaltoStations=function(showNodes){
+	if(showNodes.length==0)
+		return;
+	if(!isEmptyObject(stations)){
+		var linedata=[];
+		for(var n in showNodes){
+		var hospital=showNodes[n].FacilityName;
+		var start={name:hospital};
+    	var stls=stations[hospital];
+    	for(var n in stls){
+    		var r=[];
+    		r.push(start);
+    		r.push({name:n});
+    		linedata.push(r);
+    	}
+		}
+    	//console.log(linedata);
+    	var series=myChart.getSeries();
+		series[0].markLine={
+				smooth:true,
+                effect : {
+                    show: true,
+                    scaleSize: 1,
+                    period: 30,
+                    color: 'blue',
+                    shadowBlur: 10
+                },
+                itemStyle : {
+                    normal: {
+                        borderWidth:1,
+                        lineStyle: {
+                            type: 'solid',
+                            shadowBlur: 10
+                        }
+                    }
+                },
+                data:linedata,
+                
+		};
+		myChart.setSeries(series);
+		window.onresize = myChart.resize;
+		
+	}
+}
+
+var showDetailRoute=function(param){
+	//点击连线出现详细路径
+		var geolist={},
+		geodata=[];
+		var start=$.trim(param.name.split('>')[0]);
+		var end=$.trim(param.name.split('>')[1]);
+		//console.log(start,end);
+		var pathstr=$.trim(stations[start][end].Pathstr);
+		if(pathstr.length==0)
+			return false;
+		var points=pathstr.split(';');
+		for(var p=0;p<points.length;p++){
+			//console.log(points[p]);
+			if($.trim(points[p]).length==0)
+				continue;
+			var coord=points[p].split('|');
+			
+			//console.log(coord,geolist);
+			geolist[param.name+''+p]=[coord[0],coord[1]];
+			var r=[];
+			if((p+1)<(points.length-1)){
+			r.push({name:param.name+''+p});
+			r.push({name:param.name+''+(p+1)});
+			geodata.push(r);
+			}
+		}
+		var series=myChart.getSeries();
+		var pathseries={
+		    	name:'详细路径',
+		    	type:'map',
+		    	mapType:'none',
+		    	data:[],
+		    	geoCoord:geolist,
+				markLine:{
     					smooth:true,
     	                effect : {
     	                    show: true,
     	                    scaleSize: 1,
     	                    period: 30,
-    	                    color: 'blue',
+    	                    color: 'white',
     	                    shadowBlur: 10
     	                },
     	                itemStyle : {
@@ -165,17 +252,18 @@ var showHospitals=function(showNodes){
     	                        }
     	                    }
     	                },
-    	                data:linedata,
-    			};
-    			myChart.setSeries(series);
-        		window.onresize = myChart.resize;
-        		BDMap.centerAndZoom(bdp,16);
-    			
-    		}
-    	
-    	}
-    });
-
+    	                data:geodata,
+    	                
+    			},
+		}
+		
+		series.push(pathseries);
+		myChart.setSeries(series);
+		window.onresize = myChart.resize;
+		var bdp=new BMap.Point(geolist[param.name+'1'][0],geolist[param.name+'0'][1]);
+		BDMap.centerAndZoom(bdp,18);
+		return true;						
+		
 }
 
 //根据地址搜索坐标
@@ -247,6 +335,7 @@ var bd2GPS=function(hospital,station,tree,node){
 		    	r[13]=2*r[13]-data.points[1].lat;
 		    	exportdata.push(r.join(',').replace('\n','').replace('\r',''));
 		    	tree.treeview('getNode',node.nodeId).tags=[exportdata.length];
+		    	tree.treeview('selectNode',node.nodeId);
 	      	}
 		    });
 }
@@ -298,6 +387,7 @@ var searchStation=function(hospital,tree,node){
 	                	cnt++
 	                }
 	                tree.treeview('getNode',node.nodeId).tags=[cnt];
+	                //tree.treeview('unselectNode',node.nodeId);
 				}
 			}
 		
