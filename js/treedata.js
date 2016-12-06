@@ -200,6 +200,9 @@ var hospitalData=[
 				text:'周边公交',
 			},
 			{
+				text:'便利分析',
+			},
+			{
 				text:'百度坐标转GPS',
 			},
 			{

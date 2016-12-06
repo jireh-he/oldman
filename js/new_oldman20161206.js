@@ -153,9 +153,7 @@ var showHospitals=function(showNodes){
 
     	//点击医院出现路径图
     	if(sname=='医院'){
-    		console.log(param);
-    		var hospoint=new BMap.Point(param.data.Longitude,param.data.Latitude);
-    		BDMap.centerAndZoom(hospoint,16);
+    		showHospitaltoStations(param.name);
     	}
     });
 
@@ -545,120 +543,170 @@ var searchWalk=function(hospital,station){
 	walking.disableAutoViewport();	
 }
 //数据分析
-var hospitalAnalyze=function(leaves){
-	if(leaves.length==0)
-		return;
+var hospitalAnalyze=function(){
 	$('#modalChart').on('shown.bs.modal',function(e){
-		$(this).find('.modal-title').text('公交站便利性分析');
-		makeScatters('modalchartbody',leaves);		
+		$(this).find('.modal-title').text('医院便利性分析');
+		var resdata=makeHosAnalyzeData();
+		showRadar('modalchartbody',resdata);
+		econfig=require('echarts/config');
+		myChart.on(econfig.EVENT.CLICK,function(param){
+		    	if(param.seriesName=='医院'){
+		    		var hosp=param.name.split(',')[0];
+		    		var hospls=resdata[0];
+		    		var newls={}
+		    		for(h in hospls){
+		    			if(h==hosp){
+		    				newls[h]=hospls[h];
+		    				break;
+		    			}
+		    		}
+		    		//console.log(newls);
+		    		resdata[0]=newls;
+		    		$('#modalChart').on('shown.bs.modal',function(e){
+		    			showRadar('modalchartbody',resdata);
+		    		}).modal();			
+		    		
+		    	}
+		    });
 	}).modal();
 };
-
-//创建散点图
-var makeScatters=function(showdiv,showNodes){
-	if(showNodes.length==0)
-		return;
-	var seriesdata={}
-	var avgfloor=6514;
-	//生成数据seriesdata['行政区域']=[{name:'医院>公交站',value:[公交线路数,公交距离,医院面积]},...]
-	for(i in showNodes){
-			st=stations[showNodes[i].FacilityName];
-			if(!seriesdata[showNodes[i].AdminArea])
-				seriesdata[showNodes[i].AdminArea]=[];
-			for(var x in st){
-				var station=st[x];
-				var size=showNodes[i].Floorspace*10/avgfloor;
-				if(size>20)
-					size=20;
-				if(size<5)
-					size=5;
-				seriesdata[showNodes[i].AdminArea].push(
-						{name:showNodes[i].FacilityName+'>'+station.StationName,
-						value:[station.BusLines.split(';').length,station.Distance,size]});
-			}
-	}
-	//console.log(seriesdata);
-	var scatterseries=[];
-	//生成series
-	for(var n in seriesdata){
-		var ss={
-				'name':n,
-				'type':'scatter',
-				  markLine : {
-                      data : [
-                          {type : 'average', name: '平均距离', itemStyle:{normal:{borderColor:'blue'}}},
-                          {type : 'average', name: '平均线路数', valueIndex :0, itemStyle:{normal:{borderColor:'blue'}}}
-                      ]
-                  },
-                  markPoint : {
-                      data : [
-                          {type : 'max', name: '最大值'},
-                          {type : 'min', name: '最小值'}
-                      ]
-                  },
-                  symbolSize :function(value){
-                	  return value[2];
-                  },
-                  'data':seriesdata[n],
-		};
-		scatterseries.push(ss);
-	}
-	var legend=[];
-	for(var n in seriesdata){
-		legend.push(n);
-	}
-
+var showRadar=function(showdiv,resdata){
 	require([
-        'echarts',
-        'echarts/chart/scatter',],
-        function(ec){
+	         'echarts',
+	         'echarts/chart/radar',],
+	         function(ec){
 		var modalchart=ec.init($('#'+showdiv)[0]);
+		var result=resdata[0];
+		var maxdata=resdata[1];
 		var modaloption = {
-		           title : {
-		                'text':'公交线路数vs站点距离',
-		            },
-		            legend:{data:legend},
-		            tooltip : {
-		                trigger: 'axis',
-		                showDelay : 0,
-		                axisPointer:{
-		                    show: true,
-		                    type : 'cross',
-		                    lineStyle: {
-		                        type : 'dashed',
-		                        width : 1
-		                    }
-		                },
-		                formatter : function (params) {
-		                	//console.log(params);
-		                    if (params.value.length > 1) {
-		                        return params.seriesName + ' :'+params.name+'<br/>'
-		                           +'公交线路数:'+ params.value[0] + '条<br>' 
-		                           +'医院到公交站距离:'+ params.value[1] + '米 ';
-		                    }
-		                  
-		                },  
-		            },
-		            toolbox : {
-		                'show':false, 
-		            },
-		            grid : {'y':80,'y2':100},
-		            xAxis : [{
-		                'type':'value',
-		                'name':'公交线路数（条）'
-		            }],
-		            yAxis : [{
-		                'type':'value',
-		                'name':'站点距离(米)'
-		            }],
-		            series:scatterseries,
-		            
-		};
+			    color : (function (){
+			        var zrColor = require('zrender/tool/color');
+			        return zrColor.getStepColors('orange', 'red', 28);
+			    })(),
+			    title : {
+			        text: '医院与周边公交站位置分析',
+			        x:'right',
+			        y:'bottom'
+			    },
+			    selected:{},
+			    tooltip : {
+			        trigger: 'item',
+			        backgroundColor : 'rgba(0,0,250,0.2)'
+			    },
+			    legend: {
+			       // orient : 'vertical',
+			        //x : 'center',
+			    	show:false,
+			        data: function (){
+			                var list = [];
+			               for(var h in result){
+			            	   list.push(h);
+			               }
+			                return list;
+			            }()
+			    },
+			    toolbox: {
+			        show : true,
+			        orient : 'vertical',
+			        y:'center',
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			   polar : [
+			       {
+			           indicator : [
+			               { text: '站点数量', max: maxdata[0]},
+			               { text: '公交线路数', max: maxdata[1]},
+			               { text: '500米可选择数', max: maxdata[2]},
+			               { text: '300秒可选择数', max: maxdata[3]}
+			            ],
+			            center : ['50%', 200],
+			            radius : 150
+			        }
+			    ],
+			    calculable : false,
+			    series : (function (){
+			    	
+			        var series = [];
+			        for (var h in result) {
+			            series.push({
+			                name:h,
+			                type:'radar',
+			                symbol:'none',
+			                itemStyle: {
+			                    normal: {
+			                        lineStyle: {
+			                          width:1
+			                        }
+			                    },
+			                    emphasis : {
+			                        areaStyle: {color:'rgba(0,250,0,0.3)'}
+			                    }
+			                },
+			                data:[
+			                  {
+			                    value:[
+			                        result[h][0],
+			                        result[h][1],
+			                        result[h][2],
+			                        result[h][3]
+			                    ],
+			                    name:h
+			                  }
+			                ]
+			            })
+			        }
+			        return series;
+			    })()
+			};
 		modalchart.setOption(modaloption);
 		window.onresize = modalchart.resize;
 	});
 }
 
+var makeHosAnalyzeData=function(){
+	var result={},maxstcnt=0,maxbuscnt=0,maxbuschoice=0,maxtimechoice=0;
+	for(var h in stations){
+		var stcnt=0,buscnt=0,buschoice=0,timechoice=0;
+		station=stations[h];
+		result[h]=[];
+		for(var st in station){
+			if(station[st][3]==undefined)
+				continue;
+			//站点数量
+			stcnt++;
+			//公交线路数
+			buscnt+=station[st][2].split(';').length;
+			//可选择的公交线路数的距离系数
+			buschoice+=station[st][2].split(';').length/(station[st][3]);
+			//可选择的公交线路数的时间系数
+			timechoice+=station[st][2].split(';').length/(station[st][4]);
+		}
+		if(maxstcnt<stcnt) maxstcnt=stcnt;
+		if(maxbuscnt<buscnt) maxbuscnt=buscnt;
+		buschoice=Math.round(500*buschoice/stcnt);
+		if(buschoice>buscnt) buschoice=buscnt;
+		
+		timechoice=Math.round(300*timechoice/stcnt)
+		if(timechoice>buscnt) timechoice=buscnt;
+		
+		if(maxbuschoice<buschoice) maxbuschoice=buschoice;
+		if(maxtimechoice<timechoice) maxtimechoice=timechoice;
+		//计算面积
+		area=(stcnt+buschoice)*(buscnt*timechoice)/2.0;
+		result[h].push(stcnt);
+		result[h].push(buscnt);
+		result[h].push(buschoice);
+		result[h].push(timechoice);
+		result[h].push(area);
+		
+	}
+	return [result,[maxstcnt,maxbuscnt,maxbuschoice,maxtimechoice]];
+}
 //判断数据字典对象是否为空
 function isEmptyObject(o){
 	var t;

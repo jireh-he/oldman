@@ -89,6 +89,20 @@ var updateShowStations=function(tree){
 	showHospitaltoStations(leaves);
 	return leaves;
 }
+//显示散点图
+var showScatters=function(tree){
+	checkedNode=tree.treeview('getChecked',0);
+	var leaves=[];
+	for(var c in checkedNode){
+		if(!checkedNode[c].nodes){
+			var detail=detailNode(tree,checkedNode[c]);
+			//console.log(detail);
+			leaves=leaves.concat(detail);
+		}
+	}
+	hospitalAnalyze(leaves);
+	return leaves
+}
 
 //建立医院目录树
 var hospitalTree=function(){
@@ -101,14 +115,14 @@ var hospitalTree=function(){
         onNodeChecked: function(event, node) {
 				recurseNode(hostree,node,'expandNode');
  				recurseNode(hostree,node,'checkNode');
-        	if(['行政区域','分析操作','周边公交','数据下载'].toString().indexOf(node.text)<0){
+        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
  				updateShowHospitals(hostree);
         	}
         },
         onNodeUnchecked: function (event, node) {
     	  	  recurseNode(hostree,node,'collapseNode');
 			  recurseNode(hostree,node,'uncheckNode'); 
-        	if(['行政区域','分析操作','周边公交','数据下载'].toString().indexOf(node.text)<0){
+        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
 
 			  updateShowHospitals(hostree);
         	}
@@ -121,7 +135,7 @@ var hospitalTree=function(){
         	if(node.text=='行政区域'){
         		batchHospitals(node);
         	}
-        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS'].toString().indexOf(node.text)<0){
+        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
    
         		var hls=detailNode(hostree,node);
         		hostree.treeview('getNode',node.nodeId).tags=[hls.length];
@@ -149,6 +163,12 @@ var hospitalTree=function(){
         	if(node.text=='数据下载'){
         		if(!isEmptyObject(stations)){
         			downLoadHospitals();      				
+        			//console.log(alink.attr('href'));
+        		}
+        	}
+        	if(node.text=='便利分析'){
+        		if(!isEmptyObject(stations)){
+        			showScatters(hostree);      				
         			//console.log(alink.attr('href'));
         		}
         	}
