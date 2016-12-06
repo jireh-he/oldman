@@ -137,6 +137,9 @@ var showHospitals=function(showNodes){
     myChart = BMapExt.initECharts(container);
     window.onresize = myChart.resize;    
     BMapExt.setOption(hosoption, true);
+    var bdp=new BMap.Point(showNodes[0].Longitude,showNodes[0].Latitude);
+    BDMap.centerAndZoom(bdp,12);
+    
     myChart.on('click',function(param){
     	//console.log(param);
     	var sname=param.seriesName;
@@ -501,7 +504,7 @@ var makeSeries=function(serialname,geolist,geodata){
                 },
                 itemStyle:{
                     normal:{
-                        label:{show:false},
+                        label:{show:true},
                     }
                 },
                 data:geodata,
