@@ -665,6 +665,10 @@ var makeScatters=function(showdiv,showNodes){
 		};
 		modalchart.setOption(modaloption);
 		window.onresize = modalchart.resize;
+		modalchart.on('click',function(param){
+			showDetailRoute(param);
+			$('#modalChart').modal('hide')
+		});
 	});
 }
 
