@@ -51,6 +51,8 @@ var loadBDExtMap=function(cityname){
 		        BDMap.centerAndZoom(cityname,12);
 		        BDMap.enableScrollWheelZoom(true);
 		        BDMap.enableDragging();
+		        var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+		        BDMap.addControl(top_left_navigation); 
 		        bdGEO=new BMap.Geocoder();
 		    }
 		    );
@@ -105,7 +107,9 @@ var showHospitals=function(showNodes){
 			Affiliation: showNodes[i].Affiliation, 
 			Beds:        showNodes[i].Beds,        
 			StaffNum:    showNodes[i].StaffNum,    
-			Floorspace:  showNodes[i].Floorspace   
+			Floorspace:  showNodes[i].Floorspace,
+			Longitude:showNodes[i].Longitude,
+			Latitude:showNodes[i].Latitude
 		});
 		}
 	var hospseries=makeSeries('医院', geolist, geodata);
@@ -139,6 +143,7 @@ var showHospitals=function(showNodes){
     BMapExt.setOption(hosoption, true);
     var bdp=new BMap.Point(showNodes[0].Longitude,showNodes[0].Latitude);
     BDMap.centerAndZoom(bdp,12);
+
     
     myChart.on('click',function(param){
     	//console.log(param);
@@ -156,6 +161,7 @@ var showHospitals=function(showNodes){
     		console.log(param);
     		var hospoint=new BMap.Point(param.data.Longitude,param.data.Latitude);
     		BDMap.centerAndZoom(hospoint,16);
+   
     	}
     });
 
@@ -426,7 +432,10 @@ var showStations=function(showNodes){
 				Distance:station.Distance,
 				Duration:station.Duration,
 				BusLines:station.BusLines,
-				Hospital:showNodes[i].FacilityName});
+				Hospital:showNodes[i].FacilityName,
+				Latitude:station.Latitude,
+				Longitude:station.Longitude
+				});
 			}
 	}
 	var oldseries=myChart.getSeries()[0];
