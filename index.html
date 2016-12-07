@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,12 +7,8 @@
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
 <link rel="stylesheet" href="css/bootstrap-theme.min.css" type="text/css" />
 
-<link rel="stylesheet" href="css/theold.css" type="text/css" />
+<link rel="stylesheet" href="css/new_old.css" type="text/css" />
 
-
-<script type="text/javascript" src="js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/d3.min.js"></script>
 
 
 </head>
@@ -71,51 +66,66 @@
     <div id="overview"></div>
     </div>
     <div id="diag">
-        <h2>统计分析</h2>
-        <p>
-        在我们所采集的2014年5月公交车记录中，老人卡的数量为77945张，即我们将对全市77945位老人的出行规律进行研究分析。首先我们分析老人每日的出行人数和刷卡记录，并与所有出行人数和刷卡记录进行比较，
-        从而可以知道他们每一天的出行强度变化，我们通过公式 <b>出行强度=刷卡次数/刷卡人数</b>来表现出行强度。
-        </p>
-        <div id="totalshow">
-        <h3>厦门2014年5月每日出行人次和老人出行人次统计</h3>
-        </div>
-        <div id="fenbu">
-            <h3>老人出行公交站分布</h3>
-            <div id="map1"></div>
-        </div>
-		<table class="table">
-		<thead>
-		<tr>
-		<th>数量\场所</th><th>公园</th><th>医院</th><th>全部</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr>
-		<td>人数</td>
-		<td>22971</td>
-		<td>29496</td>
-		<td>77945</td>
-		</tr>
-		<tr>
-		<td>刷卡数</td>
-		<td>62979</td>
-		<td>73887</td>
-		<td>2419123</td>
-		</tr>
-		</tbody>
-		</table>
-		<div>
-		<h3>老人常去的公园和医院</h3>
-		<div id="map2"></div>
-		<h3>老人常去的医院和公园排行</h3>
-		<div id="paihang">
-		</div>
-		<h3>全景图</h3>
-		<div id="map3">
-		</div>	
-		</div>
+<div>
+<h3>厦门市老人服务设施分析</h3>
+
+<div id='allmap'>
+
+</div>
+<!-- start of rightbar -->
+    <div class="panel panel-default" id="rightbar">            
+     <div class="panel-heading">
+ <!-- Nav tabs -->
+  <ul id="navtabs" class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#hospital" aria-controls="hospital" role="tab" data-toggle="tab">医院</a></li>
+    <li role="presentation"><a href="#park" aria-controls="park" role="tab" data-toggle="tab">公园</a></li>
+    <li role="presentation"><a href="#shop" aria-controls="shop" role="tab" data-toggle="tab">购物</a></li>
+    <li role="presentation"><a href="#school" aria-controls="school" role="tab" data-toggle="tab">学校</a></li>
+  </ul>
+     </div>
+  <div class="panel-body">
+<!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="hospital">
+	<div id="treeview-hospital" class="treeview"></div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="park">
+<div id="treeview-park" class="treeview"></div>
+</div>
+    <div role="tabpanel" class="tab-pane" id="shop">
+<div id="treeview-shop" class="treeview"></div>
+</div>
+    <div role="tabpanel" class="tab-pane" id="school">
+    <div id="treeview-school" class="treeview"></div>
+    </div>
+  </div>
+  </div>         
+       
+</div><!--end of rightbar--> 
+
+</div>
+ 
     </div>
 </div>
+<!-- start .modal -->
+<div class="modal fade bs-example-modal-lg" id='modalChart' tabindex="-1" role="dialog" aria-labelledby="modalChartLabel">
+  <div class="modal-dialog  modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalChartLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <div id="modalchartbody" style="height: 400px">
+        </div>
+      </div>
+      <div class="modal-footer">
+
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <div class="col-md-2" id="scrollnav">
 
 <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125" data-offset-bottom="200">
@@ -184,19 +194,17 @@
 
 
 </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./js/jquery-1.12.0.min.js"></script>
+     <script src="./js/echarts.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=BFcd9e84753ab8dcef34748bc43f952d"></script>
-    <script type="text/javascript" src="http://huiyan-fe.github.io/mapv/dist/Mapv.js"></script>
-    <script type="text/javascript" src="js/oldman.js"></script>
-    <script type="text/javascript" src="js/overview.js"></script>
-    <script type="text/javascript" src="js/xm_map.js"></script>
-    <script type="text/javascript" src="js/park_hos.js"></script>
-<script type="text/javascript">
-$.ajaxSetup({
-
-        data: {csrfmiddlewaretoken: 'T2eNW2FesluwTP5dH0z3fm6ZwgGf8bgY' },
-
-});
-</script>
-
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap-treeview.min.js"></script>
+	<script src="./js/new_oldman.js"></script>
+	<script src="./js/treedata.js"></script>
+	<script src="./js/tree.js"></script>
+	<script src="./js/moduls.js"></script>
 </body>
 </html>
