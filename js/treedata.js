@@ -206,7 +206,7 @@ var hospitalData=[
 				text:'百度坐标转GPS',
 			},
 			{
-				text:'数据下载',
+				text:'GPS数据下载',
 			}
 		]			
 	}

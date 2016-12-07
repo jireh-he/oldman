@@ -577,10 +577,10 @@ var makeScatters=function(showdiv,showNodes){
 			for(var x in st){
 				var station=st[x];
 				var size=showNodes[i].Floorspace*10/avgfloor;
-				if(size>20)
-					size=20;
-				if(size<5)
-					size=5;
+				if(size>10)
+					size=10;
+				if(size<2)
+					size=2;
 				seriesdata[showNodes[i].AdminArea].push(
 						{name:showNodes[i].FacilityName+'>'+station.StationName,
 						value:[station.BusLines.split(';').length,station.Distance,size]});

@@ -115,14 +115,14 @@ var hospitalTree=function(){
         onNodeChecked: function(event, node) {
 				recurseNode(hostree,node,'expandNode');
  				recurseNode(hostree,node,'checkNode');
-        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
+        	if(['行政区域','分析操作','周边公交','GPS数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
  				updateShowHospitals(hostree);
         	}
         },
         onNodeUnchecked: function (event, node) {
     	  	  recurseNode(hostree,node,'collapseNode');
 			  recurseNode(hostree,node,'uncheckNode'); 
-        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
+        	if(['行政区域','分析操作','周边公交','GPS数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
 
 			  updateShowHospitals(hostree);
         	}
@@ -135,7 +135,7 @@ var hospitalTree=function(){
         	if(node.text=='行政区域'){
         		batchHospitals(node);
         	}
-        	if(['行政区域','分析操作','周边公交','数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
+        	if(['行政区域','分析操作','周边公交','GPS数据下载','百度坐标转GPS','便利分析'].toString().indexOf(node.text)<0){
    
         		var hls=detailNode(hostree,node);
         		hostree.treeview('getNode',node.nodeId).tags=[hls.length];
@@ -160,7 +160,7 @@ var hospitalTree=function(){
         			//console.log(alink.attr('href'));
         		}
         	}
-        	if(node.text=='数据下载'){
+        	if(node.text=='GPS数据下载'){
         		if(!isEmptyObject(stations)){
         			downLoadHospitals();      				
         			//console.log(alink.attr('href'));
