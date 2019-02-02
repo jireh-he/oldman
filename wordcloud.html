@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>老人出行热门词云</title>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="css/bootstrap-theme.min.css"
+	type="text/css" />
+<style type="text/css" id="treeview-checkable-style">
+.treeview .list-group-item {
+	cursor: pointer
+}
+
+.treeview span.indent {
+	margin-left: 10px;
+	margin-right: 10px
+}
+
+.treeview span.icon {
+	width: 12px;
+	margin-right: 5px
+}
+
+.treeview .node-disabled {
+	color: silver;
+	cursor: not-allowed
+}
+
+.node-treeview-checkable {
+	
+}
+
+.node-treeview-checkable:not (.node-disabled ):hover {
+	background-color: #F5F5F5;
+}
+</style>
+</head>
+<body>
+	<div class="row">
+		<h2>Checkable Tree</h2>
+		<div class="col-sm-4">
+		
+		</div>
+		<div class="col-sm-4">
+			<h2>Tree</h2>
+			<div id="treeview-checkable" class="treeview">
+				
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<h2>Events</h2>
+			<div id="checkable-output"></div>
+		</div>
+	</div>
+	<script src="./js/jquery-1.12.0.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/bootstrap-treeview.min.js"></script>
+</body>
+</html>
